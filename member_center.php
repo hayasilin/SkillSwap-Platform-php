@@ -19,7 +19,7 @@ $row_RecMember=mysql_fetch_assoc($RecMember);
 
 //留言板資料
 //預設每頁筆數
-$pageRow_records = 5;
+$pageRow_records = 10;
 //預設頁數
 $num_pages = 1;
 //若已經有翻頁，將頁數更新
@@ -54,8 +54,27 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
   mysql_query($query_insert);
   // echo $query_insert;
 	//重新導向回到主畫面
-	header("Location: index.php");
+  header("Location: index.php");
 }
+
+//我的相簿
+
+//預設每頁筆數
+$pageRow_records = 5;
+//本頁開始記錄筆數 = (頁數-1)*每頁記錄筆數
+$startRow_records = ($num_pages - 1) * $pageRow_records;
+//未加限制顯示筆數的SQL敘述句
+$query_RecAlbum = "SELECT `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` , `albumphoto`.`ap_picurl`, count( `albumphoto`.`ap_id` ) AS `albumNum` FROM `album` LEFT JOIN `albumphoto` ON `album`.`album_id` = `albumphoto`.`album_id` GROUP BY `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` ORDER BY `album_date` DESC";
+//加上限制顯示筆數的SQL敘述句，由本頁開始記錄筆數開始，每頁顯示預設筆數
+$query_limit_RecAlbum = $query_RecAlbum . " LIMIT " . $startRow_records . ", " . $pageRow_records;
+//以加上限制顯示筆數的SQL敘述句查詢資料到 $RecAlbum 中
+$RecAlbum = mysql_query($query_limit_RecAlbum);
+//以未加上限制顯示筆數的SQL敘述句查詢資料到 $all_RecAlbum 中
+$all_RecAlbum = mysql_query($query_RecAlbum);
+//計算總筆數
+$total_records = mysql_num_rows($all_RecAlbum);
+//計算總頁數=(總筆數/每頁筆數)後無條件進位。
+$total_pages = ceil($total_records / $pageRow_records);
 ?>
 <html>
   <head>
@@ -129,7 +148,7 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
         <div class="col-sm-3 well">
           <div class="well">
             <p><a href="#">My Profile</a></p>
-            <img src="photos/<?php echo $row_RecMember["m_profilepic"]; ?>" class="img-circle" width="65" length="65" alt="Avatar" />
+            <img src="avatars/<?php echo $row_RecMember["m_profilepic"]; ?>" class="img-circle" width="65" length="65" alt="Avatar" />
             <p><strong><?php echo $row_RecMember["m_name"];?></strong> 您好</p>
             <p>您總共登入了 <?php echo $row_RecMember["m_login"];?> 次。<br>
             本次登入的時間為：<br>
@@ -176,10 +195,6 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
                       <input type="reset" name="button2" id="button2" value="重設資料" class="btn btn-default btn-sm">
                     </div>
 				          </form>
-
-                  <button type="button" class="btn btn-default btn-sm">
-                    <span class="glyphicon glyphicon-thumbs-up"></span> Like
-                  </button>     
                 </div>
               </div>
             </div>
@@ -190,7 +205,7 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
             <div class="col-sm-3">
               <div class="well">
               <p><?php echo $row_RecBoard["boardname"]; ?></p>
-              <img src="photos/<?php echo $row_RecBoard["boardavatar"]; ?>" class="img-circle" height="55" width="55" alt="Avatar">
+              <img src="avatars/<?php echo $row_RecBoard["boardavatar"]; ?>" class="img-circle" height="55" width="55" alt="Avatar">
               </div>
             </div>
             <div class="col-sm-9">
@@ -198,8 +213,13 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
                 <h4><?php echo $row_RecBoard["boardsubject"]; ?></h4>
                 <p><?php echo nl2br($row_RecBoard["boardcontent"]); ?></p>
               </div>
-              <div class="small text-right">
-                <p><?php echo $row_RecBoard["boardtime"]; ?></p>
+              <div class="text-left">
+                <button type="button" class="btn btn-default btn-sm">
+                  <span class="glyphicon glyphicon-thumbs-up"></span> Like <?php echo $row_RecBoard["boardlikes"]; ?>
+                </button>
+                <span class="small text-right">
+                  <?php echo $row_RecBoard["boardtime"]; ?>
+                </span>
               </div>
             </div>
           </div>
@@ -219,18 +239,35 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
         </div>
 
         <div class="col-sm-2 well">
-          <div class="thumbnail">
-            <p>Upcoming Events:</p>
-            <img src="paris.jpg" alt="Paris" width="400" height="300">
-            <p><strong>Paris</strong></p>
-            <p>Fri. 27 November 2015</p>
-            <button class="btn btn-primary">Info</button>
-          </div>      
-          <div class="well">
-            <p>ADS</p>
-          </div>
-          <div class="well">
-            <p>ADS</p>
+          <p><a href="myalbum.php" class="btn btn-primary">My album</a></p>
+          <p>相簿總數: <?php echo $total_records; ?></p>
+          
+          <?php	while($row_RecAlbum=mysql_fetch_assoc($RecAlbum)){ ?>
+            <div class="thumbnail">
+              <a href="albumshow.php?id=<?php echo $row_RecAlbum["album_id"]; ?>"><?php if($row_RecAlbum["albumNum"]==0){?><img src="images/nopic.png" alt="暫無圖片" /><?php }else{ ?><img src="photos/<?php echo $row_RecAlbum["ap_picurl"]; ?>" alt="<?php echo $row_RecAlbum["album_title"]; ?>" /><?php } ?></a>
+              <p><a href="albumshow.php?id=<?php echo $row_RecAlbum["album_id"]; ?>"><?php echo $row_RecAlbum["album_title"]; ?></a></p>
+              <p class="card-text">共 <?php echo $row_RecAlbum["albumNum"]; ?> 張 </p>
+            </div>
+          <?php } ?>
+
+          <div>
+            <?php if ($num_pages > 1) { // 若不是第一頁則顯示 ?>
+              <a href="?page=1">|&lt;</a> <a href="?page=<?php echo $num_pages - 1; ?>">&lt;&lt;</a>
+            <?php }else{ ?>
+              |&lt; &lt;&lt;
+            <?php } ?>
+            <?php for ($i = 1; $i <= $total_pages; $i++) {
+              if ($i == $num_pages) {
+                echo $i . " ";
+              } else {
+                echo "<a href=\"?page=$i\">$i</a> ";
+              }
+            }?>
+            <?php if ($num_pages < $total_pages) { // 若不是最後一頁則顯示 ?>
+                <a href="?page=<?php echo $num_pages + 1; ?>">&gt;&gt;</a> <a href="?page=<?php echo $total_pages; ?>">&gt;|</a>
+              <?php }else{ ?>
+                &gt;&gt; &gt;|
+              <?php } ?>
           </div>
         </div>
       </div>
