@@ -1,1 +1,1 @@
-# SkillSwap-platform-PHP
+# SkillSwap-Platform-PHP
