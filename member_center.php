@@ -1,25 +1,12 @@
 <?php 
 header("Content-Type: text/html; charset=utf-8");
 require_once("connMysql.php");
-session_start();
-//檢查是否經過登入
-if(!isset($_SESSION["loginMember"]) || ($_SESSION["loginMember"]=="")){
-	header("Location: index.php");
-}
-//執行登出動作
-if(isset($_GET["logout"]) && ($_GET["logout"]=="true")){
-	unset($_SESSION["loginMember"]);
-	unset($_SESSION["memberLevel"]);
-	header("Location: index.php");
-}
-//繫結登入會員資料
-$query_RecMember = "SELECT * FROM `memberdata` WHERE `m_username`='".$_SESSION["loginMember"]."'";
-$RecMember = mysql_query($query_RecMember);	
-$row_RecMember=mysql_fetch_assoc($RecMember);
+
+include("check_login.php");
 
 //留言板資料
 //預設每頁筆數
-$pageRow_records = 10;
+$pageRow_records = 5;
 //預設頁數
 $num_pages = 1;
 //若已經有翻頁，將頁數更新
@@ -30,6 +17,10 @@ if (isset($_GET['page'])) {
 $startRow_records = ($num_pages - 1) * $pageRow_records;
 //未加限制顯示筆數的SQL敘述句
 $query_RecBoard = "SELECT * FROM `board` ORDER BY `boardtime` DESC";
+
+//本人留言的內容
+$query_member_RecBoard = "SELECT * FROM `board` WHERE `boardname`='".$row_RecMember["m_name"]."' ORDER BY `boardtime` DESC";
+
 //加上限制顯示筆數的SQL敘述句，由本頁開始記錄筆數開始，每頁顯示預設筆數
 $query_limit_RecBoard = $query_RecBoard . " LIMIT " . $startRow_records . ", " . $pageRow_records;
 //以加上限制顯示筆數的SQL敘述句查詢資料到 $RecBoard 中
@@ -64,7 +55,11 @@ $pageRow_records = 5;
 //本頁開始記錄筆數 = (頁數-1)*每頁記錄筆數
 $startRow_records = ($num_pages - 1) * $pageRow_records;
 //未加限制顯示筆數的SQL敘述句
-$query_RecAlbum = "SELECT `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` , `albumphoto`.`ap_picurl`, count( `albumphoto`.`ap_id` ) AS `albumNum` FROM `album` LEFT JOIN `albumphoto` ON `album`.`album_id` = `albumphoto`.`album_id` GROUP BY `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` ORDER BY `album_date` DESC";
+// $query_RecAlbum = "SELECT `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` , `albumphoto`.`ap_picurl`, count( `albumphoto`.`ap_id` ) AS `albumNum` FROM `album` LEFT JOIN `albumphoto` ON `album`.`album_id` = `albumphoto`.`album_id` GROUP BY `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` ORDER BY `album_date` DESC";
+
+//本人的相簿
+$query_RecAlbum = "SELECT `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` , `albumphoto`.`ap_picurl`, count( `albumphoto`.`ap_id` ) AS `albumNum` FROM `album` LEFT JOIN `albumphoto` ON `album`.`album_id` = `albumphoto`.`album_id` WHERE `album`.`m_id`='".$row_RecMember["m_id"]."' GROUP BY `album`.`album_id` , `album`.`album_date` , `album`.`album_location` , `album`.`album_title` , `album`.`album_desc` ORDER BY `album_date` DESC";
+
 //加上限制顯示筆數的SQL敘述句，由本頁開始記錄筆數開始，每頁顯示預設筆數
 $query_limit_RecAlbum = $query_RecAlbum . " LIMIT " . $startRow_records . ", " . $pageRow_records;
 //以加上限制顯示筆數的SQL敘述句查詢資料到 $RecAlbum 中
@@ -72,9 +67,7 @@ $RecAlbum = mysql_query($query_limit_RecAlbum);
 //以未加上限制顯示筆數的SQL敘述句查詢資料到 $all_RecAlbum 中
 $all_RecAlbum = mysql_query($query_RecAlbum);
 //計算總筆數
-$total_records = mysql_num_rows($all_RecAlbum);
-//計算總頁數=(總筆數/每頁筆數)後無條件進位。
-$total_pages = ceil($total_records / $pageRow_records);
+$total_album_records = mysql_num_rows($all_RecAlbum);
 ?>
 <html>
   <head>
@@ -108,72 +101,15 @@ $total_pages = ceil($total_records / $pageRow_records);
 <body>
   
   <header>
-    <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>                        
-          </button>
-          <a class="navbar-brand" href="#">Skill Swap</a>
-        </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Messages</a></li>
-          </ul>
-          <form class="navbar-form navbar-right" role="search">
-            <div class="form-group input-group">
-              <input type="text" class="form-control" placeholder="Search..">
-              <span class="input-group-btn">
-                <button class="btn btn-default" type="button">
-                  <span class="glyphicon glyphicon-search"></span>
-                </button>
-              </span>        
-            </div>
-          </form>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-user"></span><?php echo $row_RecMember["m_name"];?></a></li>
-            <li><a href="?logout=true"><span>登出</span></a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <?php include("navigation_section.php")?>
   </header>
   
   <main>
     <div class="container text-center">    
       <div class="row">
+
         <div class="col-sm-3 well">
-          <div class="well">
-            <p><a href="#">My Profile</a></p>
-            <img src="avatars/<?php echo $row_RecMember["m_profilepic"]; ?>" class="img-circle" width="65" length="65" alt="Avatar" />
-            <p><strong><?php echo $row_RecMember["m_name"];?></strong> 您好</p>
-            <p>您總共登入了 <?php echo $row_RecMember["m_login"];?> 次。<br>
-            本次登入的時間為：<br>
-            <?php echo $row_RecMember["m_logintime"];?></p>
-            <p align="center"><a href="member_update.php">修改資料</a> | <a href="?logout=true">登出系統</a></p>
-          </div>
-          <div class="well">
-            <p><a href="#">Interests</a></p>
-            <p>
-              <span class="label label-default">News</span>
-              <span class="label label-primary">W3Schools</span>
-              <span class="label label-success">Labels</span>
-              <span class="label label-info">Football</span>
-              <span class="label label-warning">Gaming</span>
-              <span class="label label-danger">Friends</span>
-            </p>
-          </div>
-          <div class="alert alert-success fade in">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">×</a>
-            <p><strong>Ey!</strong></p>
-            People are looking at your profile. Find out who.
-          </div>
-          <p><a href="#">Link</a></p>
-          <p><a href="#">Link</a></p>
-          <p><a href="#">Link</a></p>
+          <?php include("member_section.php")?>
         </div>
         
         <div class="col-sm-7">
@@ -239,36 +175,7 @@ $total_pages = ceil($total_records / $pageRow_records);
         </div>
 
         <div class="col-sm-2 well">
-          <p><a href="myalbum.php" class="btn btn-primary">My album</a></p>
-          <p>相簿總數: <?php echo $total_records; ?></p>
-          
-          <?php	while($row_RecAlbum=mysql_fetch_assoc($RecAlbum)){ ?>
-            <div class="thumbnail">
-              <a href="albumshow.php?id=<?php echo $row_RecAlbum["album_id"]; ?>"><?php if($row_RecAlbum["albumNum"]==0){?><img src="images/nopic.png" alt="暫無圖片" /><?php }else{ ?><img src="photos/<?php echo $row_RecAlbum["ap_picurl"]; ?>" alt="<?php echo $row_RecAlbum["album_title"]; ?>" /><?php } ?></a>
-              <p><a href="albumshow.php?id=<?php echo $row_RecAlbum["album_id"]; ?>"><?php echo $row_RecAlbum["album_title"]; ?></a></p>
-              <p class="card-text">共 <?php echo $row_RecAlbum["albumNum"]; ?> 張 </p>
-            </div>
-          <?php } ?>
-
-          <div>
-            <?php if ($num_pages > 1) { // 若不是第一頁則顯示 ?>
-              <a href="?page=1">|&lt;</a> <a href="?page=<?php echo $num_pages - 1; ?>">&lt;&lt;</a>
-            <?php }else{ ?>
-              |&lt; &lt;&lt;
-            <?php } ?>
-            <?php for ($i = 1; $i <= $total_pages; $i++) {
-              if ($i == $num_pages) {
-                echo $i . " ";
-              } else {
-                echo "<a href=\"?page=$i\">$i</a> ";
-              }
-            }?>
-            <?php if ($num_pages < $total_pages) { // 若不是最後一頁則顯示 ?>
-                <a href="?page=<?php echo $num_pages + 1; ?>">&gt;&gt;</a> <a href="?page=<?php echo $total_pages; ?>">&gt;|</a>
-              <?php }else{ ?>
-                &gt;&gt; &gt;|
-              <?php } ?>
-          </div>
+          <?php include("album_section.php")?>
         </div>
       </div>
     </div>

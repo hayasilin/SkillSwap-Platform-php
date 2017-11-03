@@ -23,7 +23,7 @@ if(isset($_POST["action"])&&($_POST["action"]=="join")){
 		$query_insert .= "'" . $_FILES["fileUpload"]["name"] . "')";
 		mysql_query($query_insert);
 		if($_FILES["fileUpload"]["error"] == 0){
-			if (move_uploaded_file($_FILES["fileUpload"]["tmp_name"], "photos/" . $_FILES["fileUpload"]["name"])) {
+			if (move_uploaded_file($_FILES["fileUpload"]["tmp_name"], "avatars/" . $_FILES["fileUpload"]["name"])) {
 				// echo "上傳成功<br />";
 				// echo "檔案名稱: ".$_FILES["fileUpload"]["name"]."<br />";
 				// echo "檔案類型: ".$_FILES["fileUpload"]["type"]."<br />";
