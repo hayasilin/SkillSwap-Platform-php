@@ -263,8 +263,8 @@ function checkmail(myEmail) {
 					<p> <font color="#FF0000">*</font> 表示為必填的欄位</p>
 
 					<input name="action" type="hidden" id="action" value="join">
-            		<input type="submit" name="Submit2" value="送出申請" class="btn btn-primary">
-            		<input type="reset" name="Submit3" value="重設資料">
+            		<input type="submit" name="Submit2" value="送出申請" class="btn btn-default">
+            		<input type="reset" name="Submit3" value="重設資料" class="btn btn-default">
             		<input type="button" name="Submit" value="回上一頁" onClick="window.history.back();" class="btn btn-default">
 				</form>
 			</div>
@@ -280,6 +280,8 @@ function checkmail(myEmail) {
 			</div>
 		</div>
 	</div>
+
+	<?php include("footer_section.php")?>
 	
 </body>
 </html>

@@ -34,7 +34,7 @@ if(isset($_POST["action"])&&($_POST["action"]=="update")){
 	$query_update .= "`m_phone`='".$_POST["m_phone"]."',";
 	$query_update .= "`m_address`='".$_POST["m_address"]."' ";
 	
-	$query_update .= "WHERE `m_id`=".$_POST["m_id"];	
+	$query_update .= "WHERE `m_id`=".$_POST["m_id"];
 	mysql_query($query_update);
 
 	if($_FILES["fileUpload"]["error"] == 0 || $_FILES["fileUpload"]["name"]!=""){
@@ -72,24 +72,6 @@ $row_RecMember=mysql_fetch_assoc($RecMember);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>    
-      /* Set black background color, white text and some padding */
-      footer {
-        margin-top: 20px;
-        background-color: #555;
-        color: white;
-        padding: 15px;
-      }
-    </style>
-    <script language="javascript">
-      function checkForm() {
-				if (document.formPost.boardcontent.value == "") {
-					alert("請填寫留言內容!");
-					document.formPost.boardcontent.focus();
-					return false;
-				}
-			}
-    </script>
 <script language="javascript">
 function checkForm(){
 	if(document.formJoin.m_passwd.value!="" || document.formJoin.m_passwdrecheck.value!=""){
@@ -247,15 +229,7 @@ function checkmail(myEmail) {
 
 </main>
 
-
-
-<footer class="container-fluid text-center">
-    <p>Footer Text</p>
- </footer>
-            
-            
-         
-            
+<?php include("footer_section.php")?>
        
 </body>
 </html>

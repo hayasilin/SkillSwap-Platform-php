@@ -90,24 +90,6 @@ $total_pages = ceil($total_records / $pageRow_records);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>    
-      /* Set black background color, white text and some padding */
-      footer {
-        margin-top: 20px;
-        background-color: #555;
-        color: white;
-        padding: 15px;
-      }
-    </style>
-    <script language="javascript">
-      function checkForm() {
-        if (document.formPost.boardcontent.value == "") {
-          alert("請填寫留言內容!");
-          document.formPost.boardcontent.focus();
-          return false;
-        }
-      }
-    </script>
   </head>
 
   <body>
@@ -147,101 +129,96 @@ $total_pages = ceil($total_records / $pageRow_records);
       </nav>
     </header>
 
-      <main>
-    <div class="container text-center">    
-      <div class="row">
+    <main>
+      <div class="container text-center">    
+        <div class="row">
+          <div class="col-sm-3 well">
+            <div>
+              <?php if(isset($_GET["errMsg"]) && ($_GET["errMsg"]=="1")){?>
+                <div class="alert alert-danger"> 登入帳號或密碼錯誤！</div>
+              <?php }?>
+            </div>
 
-        <div class="col-sm-3 well">
-          
-          <div>
-            <?php if(isset($_GET["errMsg"]) && ($_GET["errMsg"]=="1")){?>
-              <div class="alert alert-danger"> 登入帳號或密碼錯誤！</div>
-            <?php }?>
+            <h3>登入</h3>
+            <form name="form1" method="post" action="">
+              <div class="form-group">
+                <label for="email">Username:</label>
+                <input class="form-control" placeholder="Enter email" name="username" type="text" class="logintextbox" id="username" value="<?php if(isset($_COOKIE["remUser"])){echo $_COOKIE["remUser"];}?>">
+              </div>
+              <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input class="form-control" placeholder="Enter password" name="passwd" type="password" class="logintextbox" id="passwd" value="<?php if(isset($_COOKIE["remPass"])){echo $_COOKIE["remPass"];}?>">
+              </div>
+              <div class="checkbox">
+                <label><input name="rememberme" type="checkbox" id="rememberme" value="true" checked> Remember me</label>
+              </div>
+              <button type="submit" class="btn btn-default" name="button" id="button" value="登入系統">登入系統</button>
+            </form>
+
+            <p><a href="admin_passmail.php">忘記密碼，補寄密碼信。</a></p>
+            <hr />
+            <p>還沒有會員帳號?</p>
+            <p>註冊帳號免費又容易</p>
+            <p><a href="member_join.php" class="btn btn-default">馬上加入會員</a></p>
+
           </div>
-
-          <h3>登入</h3>
-          <form name="form1" method="post" action="">
-            <div class="form-group">
-              <label for="email">Username:</label>
-              <input class="form-control" placeholder="Enter email" name="username" type="text" class="logintextbox" id="username" value="<?php if(isset($_COOKIE["remUser"])){echo $_COOKIE["remUser"];}?>">
-            </div>
-            <div class="form-group">
-              <label for="pwd">Password:</label>
-              <input class="form-control" placeholder="Enter password" name="passwd" type="password" class="logintextbox" id="passwd" value="<?php if(isset($_COOKIE["remPass"])){echo $_COOKIE["remPass"];}?>">
-            </div>
-            <div class="checkbox">
-              <label><input name="rememberme" type="checkbox" id="rememberme" value="true" checked> Remember me</label>
-            </div>
-            <button type="submit" class="btn btn-default" name="button" id="button" value="登入系統">登入系統</button>
-          </form>
-
-          <p><a href="admin_passmail.php">忘記密碼，補寄密碼信。</a></p>
-          <hr />
-          <p>還沒有會員帳號?</p>
-          <p>註冊帳號免費又容易</p>
-          <p><a href="member_join.php" class="btn btn-default">馬上加入會員</a></p>
-
-        </div>
-        
-        <div class="col-sm-7">
-        
-          <div class="row">
-            <div class="col-sm-12">
-              <div class="panel panel-default text-left">
-                <div class="panel-body">
-                  
-                  <h3 class="text-center">加入會員後即可貼文！</h3>
+          
+          <div class="col-sm-7">
+          
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="panel panel-default text-left">
+                  <div class="panel-body">
+                    
+                    <h3 class="text-center">加入會員後即可貼文！</h3>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          
-          <?php while($row_RecBoard=mysql_fetch_assoc($RecBoard)){ ?>
-          <div class="row">
-            <div class="col-sm-3">
-              <div class="well">
-              <p><?php echo $row_RecBoard["boardname"]; ?></p>
-              <img src="avatars/<?php echo $row_RecBoard["boardavatar"]; ?>" class="img-circle" height="55" width="55" alt="Avatar">
+            
+            <?php while($row_RecBoard=mysql_fetch_assoc($RecBoard)){ ?>
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="well">
+                <p><?php echo $row_RecBoard["boardname"]; ?></p>
+                <img src="avatars/<?php echo $row_RecBoard["boardavatar"]; ?>" class="img-circle" height="55" width="55" alt="Avatar">
+                </div>
+              </div>
+              <div class="col-sm-9">
+                <div class="well text-left">
+                  <h4><?php echo $row_RecBoard["boardsubject"]; ?></h4>
+                  <p><?php echo nl2br($row_RecBoard["boardcontent"]); ?></p>
+                </div>
+                <div class="text-left">
+                  <span class="small">
+                    <?php echo $row_RecBoard["boardtime"]; ?>
+                  </span>
+                </div>
               </div>
             </div>
-            <div class="col-sm-9">
-              <div class="well text-left">
-                <h4><?php echo $row_RecBoard["boardsubject"]; ?></h4>
-                <p><?php echo nl2br($row_RecBoard["boardcontent"]); ?></p>
-              </div>
-              <div class="text-left">
-                <span class="small">
-                  <?php echo $row_RecBoard["boardtime"]; ?>
-                </span>
-              </div>
+            <?php } ?>
+                
+            <div id="total-records">
+                <p>資料筆數：<?php echo $total_records; ?></p>
+            </div>
+            <div id="page">
+                  <?php if ($num_pages > 1) { // 若不是第一頁則顯示 ?>
+                  <a href="?page=1">第一頁</a> | <a href="?page=<?php echo $num_pages - 1; ?>">上一頁</a> |
+                  <?php } ?>
+                  <?php if ($num_pages < $total_pages) { // 若不是最後一頁則顯示 ?>
+                  <a href="?page=<?php echo $num_pages + 1; ?>">下一頁</a> | <a href="?page=<?php echo $total_pages; ?>">最末頁</a>
+                  <?php } ?>
             </div>
           </div>
-          <?php } ?>
-              
-          <div id="total-records">
-              <p>資料筆數：<?php echo $total_records; ?></p>
-          </div>
-          <div id="page">
-                <?php if ($num_pages > 1) { // 若不是第一頁則顯示 ?>
-                <a href="?page=1">第一頁</a> | <a href="?page=<?php echo $num_pages - 1; ?>">上一頁</a> |
-                <?php } ?>
-                <?php if ($num_pages < $total_pages) { // 若不是最後一頁則顯示 ?>
-                <a href="?page=<?php echo $num_pages + 1; ?>">下一頁</a> | <a href="?page=<?php echo $total_pages; ?>">最末頁</a>
-                <?php } ?>
-          </div>
-        </div>
 
-        <div class="col-sm-2 well">
-
+          <div class="col-sm-2 well">
+              <h3>加入會員即可使用我的相簿</h3>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
 
-  </main>
-
-  <footer class="container-fluid text-center">
-    <p>Footer Text</p>
-  </footer>
+    <?php include("footer_section.php")?>
 
   </body>
 </html>

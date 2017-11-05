@@ -22,23 +22,7 @@ $row_RecPhoto = mysql_fetch_assoc($RecPhoto);
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<style>    
-	/* Set black background color, white text and some padding */
-	footer {
-		background-color: #555;
-		color: white;
-		padding: 15px;
-	}
-	</style>
-	<script language="javascript">
-	function checkForm() {
-		if (document.formPost.boardcontent.value == "") {
-			alert("請填寫留言內容!");
-			document.formPost.boardcontent.focus();
-			return false;
-		}
-	}
-	</script>
+	
 </head>
 <body>
 	<header>
@@ -64,10 +48,6 @@ $row_RecPhoto = mysql_fetch_assoc($RecPhoto);
 		</div>
 	</main>
 
-	<footer class="footer">
-	<div class="container">
-		<span class="text-muted">Place sticky footer content here.</span>
-	</div>
-</footer>		
+	<?php include("footer_section.php")?>	
 	</body>
 </html>

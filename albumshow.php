@@ -33,23 +33,6 @@ $row_RecAlbum = mysql_fetch_assoc($RecAlbum);
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<style>    
-	/* Set black background color, white text and some padding */
-	footer {
-		background-color: #555;
-		color: white;
-		padding: 15px;
-	}
-	</style>
-	<script language="javascript">
-	function checkForm() {
-		if (document.formPost.boardcontent.value == "") {
-			alert("請填寫留言內容!");
-			document.formPost.boardcontent.focus();
-			return false;
-		}
-	}
-	</script>
 </head>
 <body>
 
@@ -68,6 +51,7 @@ $row_RecAlbum = mysql_fetch_assoc($RecAlbum);
 					<h4>相簿</h4>
 					<h3><?php echo $row_RecAlbum["album_title"]; ?></h3>
 					<h5>照片總數：<?php echo $total_records; ?></h5>
+					<a href="albumfix.php?id=<?php echo $row_RecAlbum["album_id"];?>">編輯相簿</a>
 
 					<div class="album-info">
 						<p><strong>拍攝時間</strong>：<?php echo $row_RecAlbum["album_date"]; ?> <strong>拍攝地點</strong>：<?php echo $row_RecAlbum["album_location"]; ?></p>
@@ -89,13 +73,7 @@ $row_RecAlbum = mysql_fetch_assoc($RecAlbum);
 		</div>
 	</main>
 
-<footer class="footer">
-	<div class="container">
-		<span class="text-muted">Place sticky footer content here.</span>
-	</div>
-</footer>
-
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<?php include("footer_section.php")?>
 
 </body>
 </html>

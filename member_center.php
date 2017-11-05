@@ -43,7 +43,6 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
   $query_insert .= "'" . $_POST["boardcontent"] . "',";
   $query_insert .= "'" . $row_RecMember["m_profilepic"] . "')";
   mysql_query($query_insert);
-  // echo $query_insert;
 	//重新導向回到主畫面
   header("Location: index.php");
 }
@@ -85,15 +84,6 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style>    
-      /* Set black background color, white text and some padding */
-      footer {
-        margin-top: 20px;
-        background-color: #555;
-        color: white;
-        padding: 15px;
-      }
-    </style>
     <script language="javascript">
       function checkForm() {
 				if (document.formPost.boardcontent.value == "") {
@@ -120,19 +110,16 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
         </div>
         
         <div class="col-sm-7">
-        
           <div class="row">
             <div class="col-sm-12">
               <div class="panel panel-default text-left">
                 <div class="panel-body">
-                  
                   <form action="" method="post" name="formPost" id="formPost" onSubmit="return checkForm();">
                     <div class="form-group">
                       <label for="comment">貼文:</label>
                       <textarea class="form-control" rows="3" name="boardcontent" id="boardcontent"></textarea>
                     </div>
-
-                    <div class="sumit">
+                    <div>
                       <input name="action" type="hidden" id="action" value="add">
                       <input type="submit" name="button" id="button" value="送出留言" class="btn btn-default btn-sm">
                       <input type="reset" name="button2" id="button2" value="重設資料" class="btn btn-default btn-sm">
@@ -199,9 +186,7 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
 
   </main>
 
-  <footer class="container-fluid text-center">
-    <p>Footer Text</p>
-  </footer>
+  <?php include("footer_section.php")?>
 
 </body>
 </html>
