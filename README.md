@@ -17,7 +17,7 @@ This project demostrate the basic features of being a platform:
 ## Basic UI
 
 ###  Main page
-![alt text](https://raw.githubusercontent.com/hayasilin/SkillSwap-Platform-php/master/Screenshot/1.png)
+![alt text](https://raw.githubusercontent.com/hayasilin/SkillSwap-Platform-php/master/Screenshots/1.png)
 
 
 
