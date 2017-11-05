@@ -169,7 +169,8 @@ function checkmail(myEmail) {
               </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="member_join.php"><span class="glyphicon glyphicon-user"></span>申請會員</a></li>
+              <li><a href="member_join.php"><span class="glyphicon glyphicon-user class="navbar-text""></span>訪客</a></li>
+              <li class="active"><a href="member_join.php"><span class="active "></span>加入會員</a></li>
             </ul>
           </div>
         </div>
@@ -237,26 +238,26 @@ function checkmail(myEmail) {
 						<span class="smalltext">為西元格式(YYYY-MM-DD)。</span>
 					</div>
 					<div class="form-group">
-						<label for="pwd">電子郵件:</label>
+						<label for="m_email">電子郵件:</label>
 						<input class="form-control" name="m_email" type="text" id="m_email">
 						<font color="#FF0000">*</font>
 						<span class="small">請確定此電子郵件為可使用狀態，以方便未來系統使用，如補寄會員密碼信。</span>
 					</div>
 					<div class="form-group">
-						<label for="pwd">個人網頁:</label>
+						<label for="m_url">個人網頁:</label>
 						<input class="form-control" name="m_url" type="text" id="m_url">
 						<span class="small">請以「http://」 為開頭。</span> </p>
 					</div>
 					<div class="form-group">
-						<label for="pwd">電話:</label>
+						<label for="m_phone">電話:</label>
 						<input class="form-control" name="m_phone" type="text" id="m_phone">
 					</div>
 					<div class="form-group">
-						<label for="pwd">住址:</label>
+						<label for="m_address">住址:</label>
 						<input class="form-control" name="m_address" type="text" id="m_address" size="40">
 					</div>
 					<div class="form-group">
-						<label for="pwd">上傳大頭貼:</label>
+						<label for="fileUpload">上傳大頭貼:</label>
 						<input class="form-control" type="file" name="fileUpload" id="fileUpload"/>
 					</div>
 					<p> <font color="#FF0000">*</font> 表示為必填的欄位</p>

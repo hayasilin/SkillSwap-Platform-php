@@ -24,7 +24,7 @@
         </div>
       </form>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-user"></span><?php echo $row_RecMember["m_name"];?></a></li>
+        <li><a href="member_update.php"><span class="glyphicon glyphicon-user"></span><?php echo $row_RecMember["m_name"];?></a></li>
         <li><a href="?logout=true"><span>登出</span></a></li>
       </ul>
     </div>

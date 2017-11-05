@@ -20,7 +20,12 @@ if(isset($_POST["action"])&&($_POST["action"]=="update")){
 	//若有修改密碼，則更新密碼。
 	if(($_POST["m_passwd"]!="")&&($_POST["m_passwd"]==$_POST["m_passwdrecheck"])){
 		$query_update .= "`m_passwd`='".md5($_POST["m_passwd"])."',";
-	}	
+	}
+	//若有更新大頭貼，再更新
+	if ($_FILES["fileUpload"]["name"]!="") {
+		$query_update .= "`m_profilepic`='".$_FILES["fileUpload"]["name"]."', ";	
+	}
+
 	$query_update .= "`m_name`='".$_POST["m_name"]."',";	
 	$query_update .= "`m_sex`='".$_POST["m_sex"]."',";
 	$query_update .= "`m_birthday`='".$_POST["m_birthday"]."',";
@@ -28,8 +33,20 @@ if(isset($_POST["action"])&&($_POST["action"]=="update")){
 	$query_update .= "`m_url`='".$_POST["m_url"]."',";
 	$query_update .= "`m_phone`='".$_POST["m_phone"]."',";
 	$query_update .= "`m_address`='".$_POST["m_address"]."' ";
+	
 	$query_update .= "WHERE `m_id`=".$_POST["m_id"];	
 	mysql_query($query_update);
+
+	if($_FILES["fileUpload"]["error"] == 0 || $_FILES["fileUpload"]["name"]!=""){
+			if (move_uploaded_file($_FILES["fileUpload"]["tmp_name"], "avatars/" . $_FILES["fileUpload"]["name"])) {
+				// echo "上傳成功<br />";
+				// echo "檔案名稱: ".$_FILES["fileUpload"]["name"]."<br />";
+				// echo "檔案類型: ".$_FILES["fileUpload"]["type"]."<br />";
+				// echo "檔案大小: ".$_FILES["fileUpload"]["size"]."<br />";
+			}else{
+				die("檔案上傳失敗");
+			}
+		}
 	//若有修改密碼，則登出回到首頁。
 	if(($_POST["m_passwd"]!="")&&($_POST["m_passwd"]==$_POST["m_passwdrecheck"])){
 		unset($_SESSION["loginMember"]);
@@ -47,9 +64,32 @@ $row_RecMember=mysql_fetch_assoc($RecMember);
 ?>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>網站會員系統</title>
-<link href="style.css" rel="stylesheet" type="text/css">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Skill Swap</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>    
+      /* Set black background color, white text and some padding */
+      footer {
+        margin-top: 20px;
+        background-color: #555;
+        color: white;
+        padding: 15px;
+      }
+    </style>
+    <script language="javascript">
+      function checkForm() {
+				if (document.formPost.boardcontent.value == "") {
+					alert("請填寫留言內容!");
+					document.formPost.boardcontent.focus();
+					return false;
+				}
+			}
+    </script>
 <script language="javascript">
 function checkForm(){
 	if(document.formJoin.m_passwd.value!="" || document.formJoin.m_passwdrecheck.value!=""){
@@ -112,87 +152,110 @@ function checkmail(myEmail) {
 </head>
 
 <body>
-<table width="780" border="0" align="center" cellpadding="4" cellspacing="0">
-  <tr>
-    <td class="tdbline"><img src="images/mlogo.png" alt="會員系統" width="164" height="67"></td>
-  </tr>
-  <tr>
-    <td class="tdbline"><table width="100%" border="0" cellspacing="0" cellpadding="10">
-      <tr valign="top">
-        <td class="tdrline"><form action="" method="POST" name="formJoin" id="formJoin" onSubmit="return checkForm();">
-          <p class="title">修改資料</p>
-          <div class="dataDiv">
-            <hr size="1" />
-            <p class="heading">帳號資料</p>
-            <p><strong>使用帳號</strong>
-              ：<?php echo $row_RecMember["m_username"];?></p>
-            <p><strong>使用密碼</strong> ：
-              <input name="m_passwd" type="password" class="normalinput" id="m_passwd">
-              <br>
-            </p>
-            <p><strong>確認密碼</strong> ：
-              <input name="m_passwdrecheck" type="password" class="normalinput" id="m_passwdrecheck">
-              <br>
-              <span class="smalltext">若不修改密碼，請不要填寫。若要修改，請輸入密碼</span><span class="smalltext">二次。<br>
-              若修改密碼，系統會自動登出，請用新密碼登入。</span></p>
-            <hr size="1" />
-            <p class="heading">個人資料</p>
-            <p><strong>真實姓名</strong>：
-                <input name="m_name" type="text" class="normalinput" id="m_name" value="<?php echo $row_RecMember["m_name"];?>">
-                <font color="#FF0000">*</font> </p>
-            <p><strong>性　　別
-              </strong>：
-              <input name="m_sex" type="radio" value="女" <?php if($row_RecMember["m_sex"]=="女") echo "checked";?>>
-              女
-  <input name="m_sex" type="radio" value="男" <?php if($row_RecMember["m_sex"]=="男") echo "checked";?>>
-              男 <font color="#FF0000">*</font></p>
-            <p><strong>生　　日</strong>：
-                <input name="m_birthday" type="text" class="normalinput" id="m_birthday" value="<?php echo $row_RecMember["m_birthday"];?>">
-                <font color="#FF0000">*</font> <br>
-                <span class="smalltext">為西元格式(YYYY-MM-DD)。 </span></p>
-            <p><strong>電子郵件</strong>：
-                <input name="m_email" type="text" class="normalinput" id="m_email" value="<?php echo $row_RecMember["m_email"];?>">
-                <font color="#FF0000">*</font> </p>
-            <p class="smalltext">請確定此電子郵件為可使用狀態，以方便未來系統使用，如補寄會員密碼信。</p>
-            <p><strong>個人網頁</strong>：
-                <input name="m_url" type="text" class="normalinput" id="m_url" value="<?php echo $row_RecMember["m_url"];?>">
-                <br>
-                <span class="smalltext">請以「http://」 為開頭。</span> </p>
-            <p><strong>電　　話</strong>：
-                <input name="m_phone" type="text" class="normalinput" id="m_phone" value="<?php echo $row_RecMember["m_phone"];?>">
-            </p>
-            <p><strong>住　　址</strong>：
-                <input name="m_address" type="text" class="normalinput" id="m_address" value="<?php echo $row_RecMember["m_address"];?>" size="40">
-            </p>
-            <p> <font color="#FF0000">*</font> 表示為必填的欄位</p>
-          </div>
-          <hr size="1" />
-          <p align="center">
-            <input name="m_id" type="hidden" id="m_id" value="<?php echo $row_RecMember["m_id"];?>">
-            <input name="action" type="hidden" id="action" value="update">
-            <input type="submit" name="Submit2" value="修改資料">
-            <input type="reset" name="Submit3" value="重設資料">
-            <input type="button" name="Submit" value="回上一頁" onClick="window.history.back();">
-          </p>
-        </form></td>
-        <td width="200">
-        <div class="boxtl"></div><div class="boxtr"></div>
-<div class="regbox">
-          <p class="heading"><strong>會員系統</strong></p>
-          
-            <p><strong><?php echo $row_RecMember["m_name"];?></strong> 您好。</p>
-            <p>您總共登入了 <?php echo $row_RecMember["m_login"];?> 次。<br>
-            本次登入的時間為：<br>
-            <?php echo $row_RecMember["m_logintime"];?></p>
-            <p align="center"><a href="member_center.php">會員中心</a> | <a href="?logout=true">登出系統</a></p>
-</div>
-        <div class="boxbl"></div><div class="boxbr"></div></td>
-      </tr>
-    </table></td>
-  </tr>
-  <tr>
-    <td align="center" background="images/album_r2_c1.jpg" class="trademark">© 2008 eHappy Studio All Rights Reserved.</td>
-  </tr>
-</table>
+
+	<header>
+    	<?php include("navigation_section.php")?>
+  	</header>
+
+  <main>
+		<div class="container text-center">    
+			<div class="row">
+				
+				<div class="col-sm-3 well">
+					<?php include("member_section.php")?>
+				</div>
+		
+				<div class="col-sm-7">
+				  <h3>修改資料</h3>
+				  <div class="text-left">
+				  <form action="" method="POST" enctype="multipart/form-data" name="formJoin" id="formJoin" onSubmit="return checkForm();">
+
+				  	<hr size="1" />
+					<h3>帳號資料</h3>
+					<div class="form-group">
+						<strong>使用帳號</strong>：<?php echo $row_RecMember["m_username"];?>
+					</div>
+					<div class="form-group">
+						<label for="m_passwd">使用密碼:</label>
+						<input class="form-control" name="m_passwd" type="password" id="m_passwd">
+					</div>
+					<div class="form-group">
+						<label for="m_passwdrecheck">確認密碼:</label>
+						<input class="form-control" name="m_passwdrecheck" type="password" id="m_passwdrecheck">
+                		<span class="small">若不修改密碼，請不要填寫。若要修改，請輸入密碼二次。若修改密碼，系統會自動登出，請用新密碼登入。</span></p>
+					</div>
+					<hr size="1" />
+					<h3>個人資料</h3>
+					<div class="form-group">
+						<label for="m_name">真實姓名:</label>
+						<input name="m_name" type="text" class="form-control" id="m_name" value="<?php echo $row_RecMember["m_name"];?>">
+						<font color="#FF0000">*</font>
+					</div>
+					<div class="form-check">
+						<font color="#FF0000">*</font>
+						<label>性別:</label>
+						<label><input name="m_sex" type="radio" value="女" <?php if($row_RecMember["m_sex"]=="女") echo "checked";?>> 女</label>
+						<label><input name="m_sex" type="radio" value="男" <?php if($row_RecMember["m_sex"]=="男") echo "checked";?>> 男</label>
+					</div>
+					<br />
+					<div class="form-group">
+						<label for="m_birthday">生日:</label>
+						<input name="m_birthday" type="text" class="form-control" id="m_birthday" value="<?php echo $row_RecMember["m_birthday"];?>">
+						<font color="#FF0000">*</font>
+						<span class="smalltext">為西元格式(YYYY-MM-DD)。</span>
+					</div>
+					<div class="form-group">
+						<label for="m_email">電子郵件:</label>
+						<input name="m_email" type="text" class="form-control" id="m_email" value="<?php echo $row_RecMember["m_email"];?>">
+						<font color="#FF0000">*</font>
+						<span class="small">請確定此電子郵件為可使用狀態，以方便未來系統使用，如補寄會員密碼信。</span>
+					</div>
+					<div class="form-group">
+						<label for="m_url">個人網頁:</label>
+						<input name="m_url" type="text" class="form-control" id="m_url" value="<?php echo $row_RecMember["m_url"];?>">
+						<span class="small">請以「http://」 為開頭。</span> </p>
+					</div>
+					<div class="form-group">
+						<label for="m_phone">電話:</label>
+						<input name="m_phone" type="text" class="form-control" id="m_phone" value="<?php echo $row_RecMember["m_phone"];?>">
+					</div>
+					<div class="form-group">
+						<label for="m_address">住址:</label>
+						<input name="m_address" type="text" class="form-control" id="m_address" value="<?php echo $row_RecMember["m_address"];?>" size="40">
+					</div>
+					<div class="form-group">
+						<label>目前的大頭貼:</label>
+						<label><img src="avatars/<?php echo $row_RecMember["m_profilepic"]; ?>" class="img-circle" width="65" length="65" alt="Avatar" /></label>
+					</div>
+					<div class="form-group">
+						<label for="fileUpload">變更大頭貼:</label>
+						<input class="form-control" type="file" name="fileUpload" id="fileUpload"/>
+					</div>
+
+					<input name="m_id" type="hidden" id="m_id" value="<?php echo $row_RecMember["m_id"];?>">
+            		<input name="action" type="hidden" id="action" value="update">
+            		<input type="submit" name="Submit2" value="修改資料" class="btn btn-default">
+            		<input type="reset" name="Submit3" value="重設資料" class="btn btn-default">
+            		<input type="button" name="Submit" value="回上一頁" onClick="window.history.back();" class="btn btn-default">
+				
+					</form>
+					</div>
+				</div>
+			</div>  
+		</div>
+	</div>
+
+</main>
+
+
+
+<footer class="container-fluid text-center">
+    <p>Footer Text</p>
+ </footer>
+            
+            
+         
+            
+       
 </body>
 </html>

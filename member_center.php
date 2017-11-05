@@ -48,6 +48,12 @@ if (isset($_POST["action"]) && ($_POST["action"] == "add")) {
   header("Location: index.php");
 }
 
+if (isset($_POST["action"]) && ($_POST["action"] == "like")) {
+  $query_RecLikeUpdate = "UPDATE `board` SET `boardlikes`=`boardlikes`+1 WHERE `boardid`='".$_POST["boardid"]."'"; 
+  mysql_query($query_RecLikeUpdate);
+  header("Location: index.php");
+}
+
 //我的相簿
 
 //預設每頁筆數
@@ -82,6 +88,7 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
     <style>    
       /* Set black background color, white text and some padding */
       footer {
+        margin-top: 20px;
         background-color: #555;
         color: white;
         padding: 15px;
@@ -150,12 +157,22 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
                 <p><?php echo nl2br($row_RecBoard["boardcontent"]); ?></p>
               </div>
               <div class="text-left">
-                <button type="button" class="btn btn-default btn-sm">
+
+                <form action="" method="post" name="likePost" id="likePost" class="form-inline">
+                  <input name="boardid" type="hidden" id="boardid" value="<?php echo $row_RecBoard["boardid"]; ?>">
+                  <input name="action" type="hidden" id="action" value="like">
+                  <button type="submit" class="btn btn-default btn-sm">
                   <span class="glyphicon glyphicon-thumbs-up"></span> Like <?php echo $row_RecBoard["boardlikes"]; ?>
+
+                  <button type="button" class="btn btn-default btn-sm">
+                    <?php echo $row_RecBoard["boardmail"]; ?>
+                  </button>
+                  <span class="small">
+                    <?php echo $row_RecBoard["boardtime"]; ?>
+                  </span>
                 </button>
-                <span class="small text-right">
-                  <?php echo $row_RecBoard["boardtime"]; ?>
-                </span>
+                </form>
+
               </div>
             </div>
           </div>

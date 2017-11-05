@@ -51,19 +51,63 @@ if(isset($_POST["username"]) && isset($_POST["passwd"])){
 		header("Location: index.php?errMsg=1");
 	}
 }
+
+//留言板資料
+//預設每頁筆數
+$pageRow_records = 5;
+//預設頁數
+$num_pages = 1;
+//若已經有翻頁，將頁數更新
+if (isset($_GET['page'])) {
+  $num_pages = $_GET['page'];
+}
+//本頁開始記錄筆數 = (頁數-1)*每頁記錄筆數
+$startRow_records = ($num_pages - 1) * $pageRow_records;
+//未加限制顯示筆數的SQL敘述句
+$query_RecBoard = "SELECT * FROM `board` ORDER BY `boardtime` DESC";
+
+//本人留言的內容
+$query_member_RecBoard = "SELECT * FROM `board` WHERE `boardname`='".$row_RecMember["m_name"]."' ORDER BY `boardtime` DESC";
+
+//加上限制顯示筆數的SQL敘述句，由本頁開始記錄筆數開始，每頁顯示預設筆數
+$query_limit_RecBoard = $query_RecBoard . " LIMIT " . $startRow_records . ", " . $pageRow_records;
+//以加上限制顯示筆數的SQL敘述句查詢資料到 $RecBoard 中
+$RecBoard = mysql_query($query_limit_RecBoard);
+//以未加上限制顯示筆數的SQL敘述句查詢資料到 $all_RecBoard 中
+$all_RecBoard = mysql_query($query_RecBoard);
+//計算總筆數
+$total_records = mysql_num_rows($all_RecBoard);
+//計算總頁數=(總筆數/每頁筆數)後無條件進位。
+$total_pages = ceil($total_records / $pageRow_records);
 ?>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
     <title>Skill Swap</title>
-    
     <link href="style.css" rel="stylesheet" type="text/css">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    
+    <style>    
+      /* Set black background color, white text and some padding */
+      footer {
+        margin-top: 20px;
+        background-color: #555;
+        color: white;
+        padding: 15px;
+      }
+    </style>
+    <script language="javascript">
+      function checkForm() {
+        if (document.formPost.boardcontent.value == "") {
+          alert("請填寫留言內容!");
+          document.formPost.boardcontent.focus();
+          return false;
+        }
+      }
+    </script>
   </head>
 
   <body>
@@ -77,11 +121,11 @@ if(isset($_POST["username"]) && isset($_POST["passwd"])){
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>                        
             </button>
-            <a class="navbar-brand" href="#">Skill Swap</a>
+            <a class="navbar-brand" href="index.php">Skill Swap</a>
           </div>
           <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">Home</a></li>
+              <li class="active"><a href="index.php">Home</a></li>
               <li><a href="#">Messages</a></li>
             </ul>
             <form class="navbar-form navbar-right" role="search">
@@ -95,44 +139,109 @@ if(isset($_POST["username"]) && isset($_POST["passwd"])){
               </div>
             </form>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="member_join.php"><span class="glyphicon glyphicon-user"></span>申請會員</a></li>
+              <li><a href="member_join.php"><span class="glyphicon glyphicon-user class="navbar-text""></span>訪客</a></li>
+              <li class="active"><a href="member_join.php"><span class="active "></span>加入會員</a></li>
             </ul>
           </div>
         </div>
       </nav>
     </header>
 
-    <main>
-      <div class="container">
+      <main>
+    <div class="container text-center">    
+      <div class="row">
 
-        <div>
-          <?php if(isset($_GET["errMsg"]) && ($_GET["errMsg"]=="1")){?>
-            <div class="alert alert-danger"> 登入帳號或密碼錯誤！</div>
-          <?php }?>
+        <div class="col-sm-3 well">
+          
+          <div>
+            <?php if(isset($_GET["errMsg"]) && ($_GET["errMsg"]=="1")){?>
+              <div class="alert alert-danger"> 登入帳號或密碼錯誤！</div>
+            <?php }?>
+          </div>
+
+          <h3>登入</h3>
+          <form name="form1" method="post" action="">
+            <div class="form-group">
+              <label for="email">Username:</label>
+              <input class="form-control" placeholder="Enter email" name="username" type="text" class="logintextbox" id="username" value="<?php if(isset($_COOKIE["remUser"])){echo $_COOKIE["remUser"];}?>">
+            </div>
+            <div class="form-group">
+              <label for="pwd">Password:</label>
+              <input class="form-control" placeholder="Enter password" name="passwd" type="password" class="logintextbox" id="passwd" value="<?php if(isset($_COOKIE["remPass"])){echo $_COOKIE["remPass"];}?>">
+            </div>
+            <div class="checkbox">
+              <label><input name="rememberme" type="checkbox" id="rememberme" value="true" checked> Remember me</label>
+            </div>
+            <button type="submit" class="btn btn-default" name="button" id="button" value="登入系統">登入系統</button>
+          </form>
+
+          <p><a href="admin_passmail.php">忘記密碼，補寄密碼信。</a></p>
+          <hr />
+          <p>還沒有會員帳號?</p>
+          <p>註冊帳號免費又容易</p>
+          <p><a href="member_join.php" class="btn btn-default">馬上加入會員</a></p>
+
+        </div>
+        
+        <div class="col-sm-7">
+        
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="panel panel-default text-left">
+                <div class="panel-body">
+                  
+                  <h3 class="text-center">加入會員後即可貼文！</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <?php while($row_RecBoard=mysql_fetch_assoc($RecBoard)){ ?>
+          <div class="row">
+            <div class="col-sm-3">
+              <div class="well">
+              <p><?php echo $row_RecBoard["boardname"]; ?></p>
+              <img src="avatars/<?php echo $row_RecBoard["boardavatar"]; ?>" class="img-circle" height="55" width="55" alt="Avatar">
+              </div>
+            </div>
+            <div class="col-sm-9">
+              <div class="well text-left">
+                <h4><?php echo $row_RecBoard["boardsubject"]; ?></h4>
+                <p><?php echo nl2br($row_RecBoard["boardcontent"]); ?></p>
+              </div>
+              <div class="text-left">
+                <span class="small">
+                  <?php echo $row_RecBoard["boardtime"]; ?>
+                </span>
+              </div>
+            </div>
+          </div>
+          <?php } ?>
+              
+          <div id="total-records">
+              <p>資料筆數：<?php echo $total_records; ?></p>
+          </div>
+          <div id="page">
+                <?php if ($num_pages > 1) { // 若不是第一頁則顯示 ?>
+                <a href="?page=1">第一頁</a> | <a href="?page=<?php echo $num_pages - 1; ?>">上一頁</a> |
+                <?php } ?>
+                <?php if ($num_pages < $total_pages) { // 若不是最後一頁則顯示 ?>
+                <a href="?page=<?php echo $num_pages + 1; ?>">下一頁</a> | <a href="?page=<?php echo $total_pages; ?>">最末頁</a>
+                <?php } ?>
+          </div>
         </div>
 
-        <h2>登入會員系統</h2>
-        <form name="form1" method="post" action="">
-          <div class="form-group">
-            <label for="email">Username:</label>
-            <input class="form-control" placeholder="Enter email" name="username" type="text" class="logintextbox" id="username" value="<?php if(isset($_COOKIE["remUser"])){echo $_COOKIE["remUser"];}?>">
-          </div>
-          <div class="form-group">
-            <label for="pwd">Password:</label>
-            <input class="form-control" placeholder="Enter password" name="passwd" type="password" class="logintextbox" id="passwd" value="<?php if(isset($_COOKIE["remPass"])){echo $_COOKIE["remPass"];}?>">
-          </div>
-          <div class="checkbox">
-            <label><input name="rememberme" type="checkbox" id="rememberme" value="true" checked> Remember me</label>
-          </div>
-          <button type="submit" class="btn btn-default" name="button" id="button" value="登入系統">登入系統</button>
-        </form>
+        <div class="col-sm-2 well">
 
-        <p><a href="admin_passmail.php">忘記密碼，補寄密碼信。</a></p>
-        <hr />
-        <p>還沒有會員帳號?</p>
-        <p>註冊帳號免費又容易</p>
-        <p><a href="member_join.php">馬上申請會員</a></p>
+        </div>
       </div>
-    </main>
+    </div>
+
+  </main>
+
+  <footer class="container-fluid text-center">
+    <p>Footer Text</p>
+  </footer>
+
   </body>
 </html>

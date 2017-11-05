@@ -1,5 +1,4 @@
 <div class="well">
-  <p><a href="#">My Profile</a></p>
   <img src="avatars/<?php echo $row_RecMember["m_profilepic"]; ?>" class="img-circle" width="65" length="65" alt="Avatar" />
   <p><strong><?php echo $row_RecMember["m_name"];?></strong> 您好</p>
   <p>您總共登入了 <?php echo $row_RecMember["m_login"];?> 次。<br>
