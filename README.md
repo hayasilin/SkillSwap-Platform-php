@@ -16,17 +16,8 @@ This project demostrate the basic features of being a platform:
 
 ## Basic UI
 
-###  First page
+###  Main page
 ![alt text](https://raw.githubusercontent.com/hayasilin/Singlepageweb-React/master/Screenshot/1.png)
-
-### List Page
-![alt text](https://raw.githubusercontent.com/hayasilin/Singlepageweb-React/master/Screenshot/2.png)
-
-### Add page
-![alt text](https://raw.githubusercontent.com/hayasilin/Singlepageweb-React/master/Screenshot/3.png)
-
-### Edit Page
-![alt text](https://raw.githubusercontent.com/hayasilin/Singlepageweb-React/master/Screenshot/4.png)
 
 
 
