@@ -13,6 +13,8 @@ This project demostrate the basic features of being a platform:
 
 * The environemnt of running PHP 5
 * The environment of running MySQL
+* Run phpmyadmin
+* Import the skillswap.sql file through phpmyadmin
 
 ## Basic UI
 
