@@ -24,6 +24,8 @@ This project demostrate the basic features of being a platform:
 ###  My album page
 ![alt text](https://raw.githubusercontent.com/hayasilin/SkillSwap-Platform-php/master/Screenshots/2.png)
 
+###  My Profile page
+![alt text](https://raw.githubusercontent.com/hayasilin/SkillSwap-Platform-php/master/Screenshots/3.png)
 
 ## Authors
 

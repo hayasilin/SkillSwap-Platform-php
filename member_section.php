@@ -1,10 +1,10 @@
 <div class="well">
-  <img src="avatars/<?php echo $row_RecMember["m_profilepic"]; ?>" class="img-circle" width="65" length="65" alt="Avatar" />
+  <a href="index.php"><img src="avatars/<?php echo $row_RecMember["m_profilepic"]; ?>" class="img-circle" width="65" length="65" alt="Avatar" /></a>
   <p><strong><?php echo $row_RecMember["m_name"];?></strong> 您好</p>
   <p>您總共登入了 <?php echo $row_RecMember["m_login"];?> 次。<br>
   本次登入的時間為：<br>
   <?php echo $row_RecMember["m_logintime"];?></p>
-  <p align="center"><a href="member_update.php">修改資料</a> | <a href="?logout=true">登出系統</a></p>
+  <p align="center"><a href="member_profile.php">My Profile</a> | <a href="?logout=true">登出系統</a></p>
 </div>
 <div class="well">
   <p><a href="#">Interests</a></p>
