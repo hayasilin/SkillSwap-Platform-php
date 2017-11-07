@@ -92,6 +92,14 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
 					return false;
 				}
 			}
+
+      function checkSearchForm(){
+        if(document.searchForm.keyword.value==""){
+        alert("請填寫關鍵字!");
+        document.searchForm.keyword.focus();
+        return false;
+        }
+      }
     </script>
   </head>
 

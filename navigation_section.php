@@ -13,16 +13,18 @@
         <li class="active"><a href="index.php">Home</a></li>
         <li><a href="#">Messages</a></li>
       </ul>
-      <form class="navbar-form navbar-right" role="search">
+
+      <form class="navbar-form navbar-right" role="search" name="searchForm" action="search_result.php" method="post" onSubmit="return checkSearchForm();">
         <div class="form-group input-group">
-          <input type="text" class="form-control" placeholder="Search..">
+          <input name="keyword" type="text" class="form-control" placeholder="Search..">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button">
+            <button class="btn btn-default" type="submit" name="ok" value="開始搜尋">
               <span class="glyphicon glyphicon-search"></span>
             </button>
           </span>        
         </div>
       </form>
+
       <ul class="nav navbar-nav navbar-right">
         <li><a href="member_update.php"><span class="glyphicon glyphicon-user"></span><?php echo $row_RecMember["m_name"];?></a></li>
         <li><a href="?logout=true"><span>登出</span></a></li>

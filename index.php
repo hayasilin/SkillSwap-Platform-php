@@ -66,8 +66,13 @@ $startRow_records = ($num_pages - 1) * $pageRow_records;
 //未加限制顯示筆數的SQL敘述句
 $query_RecBoard = "SELECT * FROM `board` ORDER BY `boardtime` DESC";
 
-//本人留言的內容
-$query_member_RecBoard = "SELECT * FROM `board` WHERE `boardname`='".$row_RecMember["m_name"]."' ORDER BY `boardtime` DESC";
+$searchTitle = "";
+if (isset($_POST["keyword"]) && ($_POST["keyword"] != "")) {
+  $query_RecBoard = "SELECT * FROM `board` WHERE `boardcontent` LIKE '%" .$_POST["keyword"]. "%' ORDER BY `boardtime` DESC";
+  $searchTitle = "<h3>" .$_POST["keyword"]. "：的搜尋結果</h3>";
+}else{
+  $searchTitle = "";
+}
 
 //加上限制顯示筆數的SQL敘述句，由本頁開始記錄筆數開始，每頁顯示預設筆數
 $query_limit_RecBoard = $query_RecBoard . " LIMIT " . $startRow_records . ", " . $pageRow_records;
@@ -92,6 +97,16 @@ $total_pages = ceil($total_records / $pageRow_records);
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   </head>
 
+  <script>
+    function checkSearchForm(){
+      if(document.searchForm.keyword.value==""){
+      alert("請填寫關鍵字!");
+      document.searchForm.keyword.focus();
+      return false;
+      }
+    }
+  </script>
+
   <body>
 
     <header>
@@ -110,11 +125,11 @@ $total_pages = ceil($total_records / $pageRow_records);
               <li class="active"><a href="index.php">Home</a></li>
               <li><a href="#">Messages</a></li>
             </ul>
-            <form class="navbar-form navbar-right" role="search">
+            <form class="navbar-form navbar-right" role="search" name="searchForm" action="" method="post" onSubmit="return checkSearchForm();">
               <div class="form-group input-group">
-                <input type="text" class="form-control" placeholder="Search..">
+                <input name="keyword" type="text" class="form-control" placeholder="Search..">
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button">
+                  <button class="btn btn-default" type="submit" name="ok" value="開始搜尋">
                     <span class="glyphicon glyphicon-search"></span>
                   </button>
                 </span>        
@@ -176,6 +191,7 @@ $total_pages = ceil($total_records / $pageRow_records);
               </div>
             </div>
             
+            <?php echo $searchTitle ?>
             <?php while($row_RecBoard=mysql_fetch_assoc($RecBoard)){ ?>
             <div class="row">
               <div class="col-sm-3">
