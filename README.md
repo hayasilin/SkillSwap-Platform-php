@@ -34,6 +34,9 @@ This project demostrate the basic features of being a platform:
 ###  Search page
 ![alt text](https://raw.githubusercontent.com/hayasilin/SkillSwap-Platform-php/master/Screenshots/4.png)
 
+###  Toggle modal page
+![alt text](https://raw.githubusercontent.com/hayasilin/SkillSwap-Platform-php/master/Screenshots/5.png)
+
 ## Authors
 
 * **Kuan-Wei**
