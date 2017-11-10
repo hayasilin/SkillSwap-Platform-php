@@ -100,6 +100,13 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
         return false;
         }
       }
+
+      function readDetail(dom){
+        var id = $(dom).attr('data-id');
+        $("#projectModal").load("modalProject.php?id=" + id, function(){
+          $("#projectModal").modal('show');
+        });
+      }
     </script>
   </head>
 
@@ -142,8 +149,10 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
           <div class="row">
             <div class="col-sm-3">
               <div class="well">
-              <p><?php echo $row_RecBoard["boardname"]; ?></p>
-              <img src="avatars/<?php echo $row_RecBoard["boardavatar"]; ?>" class="img-circle" height="55" width="55" alt="Avatar">
+                <a data-toggle="modal" onclick="readDetail(this)" data-id="<?php echo $row_RecBoard["boardname"]; ?>">
+                  <p><?php echo $row_RecBoard["boardname"]; ?></p>
+                  <img src="avatars/<?php echo $row_RecBoard["boardavatar"]; ?>" class="img-circle" height="55" width="55" alt="Avatar">
+                </a>
               </div>
             </div>
             <div class="col-sm-9">
@@ -196,5 +205,7 @@ $total_album_records = mysql_num_rows($all_RecAlbum);
 
   <?php include("footer_section.php")?>
 
+
+  <div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></div>
 </body>
 </html>
