@@ -5,6 +5,9 @@ This is a web platform application project which contains basic functions of bei
 
 This project demostrates the basic CRUD in php web application and the usage of MySQL database, which I believe will be a good example of how to use php to build a semi-social networking web for php beginners.
 
+###  Animation
+![alt text](https://raw.githubusercontent.com/hayasilin/SkillSwap-Platform-php/master/Screenshots/animate.gif)
+
 
 This project demostrate the basic features of being a platform:
 * Member system
